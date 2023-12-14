@@ -9,10 +9,11 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="bg-slate-100 ">
+    <div className="bg-slate-100 mx-auto ">
       <Header />
-      <div className="grid grid-cols-3 gap-4 justify-between mx-auto max-w-screen-lg">
+      <div className="grid grid-cols-2 gap-10 justify-between mx-auto max-w-screen-lg">
         <Timeline />
+
         <Sidebar />
       </div>
     </div>
