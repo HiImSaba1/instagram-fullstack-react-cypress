@@ -74,7 +74,7 @@ export default function Actions({
         </div>
       </div>
       <div className="p-4 py-0">
-        <p className="font-bold">
+        <p className="font-bold text-md pb-2 ml-1">
           {likes === 1 ? `${likes} like` : `${likes} likes`}
         </p>
       </div>
