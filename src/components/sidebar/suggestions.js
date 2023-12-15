@@ -18,14 +18,14 @@ export default function Suggestions({ loggedInUserDocId, following, userId }) {
   }, [userId, following]);
 
   if (!profiles) {
-    return (<Skeleton count={10} height={150} />);
+    return (<Skeleton count={6} height={150} />);
   }
 
   if (profiles.length > 0) {
     return (
       <div className="rounded flex flex-col">
         <div className="text-sm flex items-center align-items justify-between mb-2">
-          <p className="font-bold text-gray-base">Suggestions for you</p>
+          <p className="text-gray-base font-bold text-lg">Suggestions for you</p>
         </div>
         <div className="mt-4 grid gap-5">
           {profiles.map((profile) => (

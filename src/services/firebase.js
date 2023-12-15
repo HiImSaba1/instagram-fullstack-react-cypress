@@ -81,17 +81,37 @@ export async function updateFollowedUserFollowers(
   });
 }
 
-
 export async function getPhotos(userId, following) {
-  const photoRefs = collection(firestore, 'photos');
-  const q = query(photoRefs, where('userId', 'in', following));
+  const photoRefs = collection(firestore, "photos");
+  const q = query(photoRefs, where("userId", "in", following));
   const querySnapshot = await getDocs(q);
   const userFollowedPhotos = [];
 
   querySnapshot.forEach((photo) => {
     userFollowedPhotos.push({
       ...photo.data(),
-      docId: photo.id
+      docId: photo.id,
     });
+  });
+
+  const photoWithUserDetails = await Promise.all(
+    userFollowedPhotos.map(async (photo) => {
+      let userLikedPhoto = false;
+      if (photo.likes.includes(userId)) {
+        userLikedPhoto = true;
+      }
+      const user = await getUserByUserId(photo.userId);
+      const { username } = user;
+      return { username, ...photo, userLikedPhoto };
+    })
+  );
+  return photoWithUserDetails;
+}
+
+export async function updateLikes(photoDocId, userId, isLiked) {
+  const photoDocRef = doc(firestore, 'photos', photoDocId);
+
+  return updateDoc(photoDocRef, {
+    likes: isLiked ? arrayRemove(userId) : arrayUnion(userId)
   });
 }

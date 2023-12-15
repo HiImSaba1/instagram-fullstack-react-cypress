@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useState } from "react";
 import * as ROUTES from "../constants/routes";
 import { doesUsernameExist } from "../services/firebase";
 import {
