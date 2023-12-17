@@ -114,4 +114,4 @@ export async function updateLikes(photoDocId, userId, isLiked) {
   return updateDoc(photoDocRef, {
     likes: isLiked ? arrayRemove(userId) : arrayUnion(userId)
   });
-}
+} 

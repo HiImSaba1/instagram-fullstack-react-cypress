@@ -9,7 +9,7 @@ export default function Timeline() {
   console.log("photos", photos);
 
   return (
-    <div className="container col-span-2 px-4 shadow-md">
+    <div className="container col-span-2 px-4">
       {!photos ? (
         <Skeleton count={6} height={300} width={400} className="mb-5" />
       ) : photos?.length > 0 ? (
