@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
-import PropTypes from 'prop-types';
-import Skeleton from 'react-loading-skeleton';
+import PropTypes from "prop-types";
+import Skeleton from "react-loading-skeleton";
 
 export default function Photos({ photos }) {
   return (
@@ -8,12 +8,16 @@ export default function Photos({ photos }) {
       <div className="grid grid-cols-3 gap-8 mt-4 mb-12">
         {!photos ? (
           <Skeleton count={12} width={320} height={4} />
-        ) : photos.length > 0
-          ? photos.map((photo) => (
-            <div key={photo.docId} className="relative group">
-              <img src={photo.imageSrc} alt={photo.caption} />
-              <div className="absolute bottom-0 left-0 bg-gray-200 z-10 w-full justify-evenly items-center h-full
-                bg-black-faded group-hover:flex hidden"
+        ) : photos.length > 0 ? (
+          photos.map((photo) => (
+            <div
+              key={photo.docId}
+              className="relative group transition ease-in-out delay-150  hover:scale-105 hover:opacity-80 duration-250 last:pb-11"
+            >
+              <img className=" rounded" src={photo.imageSrc} alt={photo.caption} />
+              <div
+                className="absolute bottom-0 left-0  z-10 w-full justify-evenly items-center h-full
+               group-hover:flex hidden"
               >
                 <p className="flex items-center text-white font-bold">
                   <svg
@@ -49,9 +53,12 @@ export default function Photos({ photos }) {
               </div>
             </div>
           ))
-          : null}
+        ) : null}
       </div>
-      {!photos || (photos.length === 0 && <p className="text-center text-2xl">No Posts Yet</p>)}
+      {!photos ||
+        (photos.length === 0 && (
+          <p className="text-center text-2xl">No Posts Yet</p>
+        ))}
     </div>
   );
 }
