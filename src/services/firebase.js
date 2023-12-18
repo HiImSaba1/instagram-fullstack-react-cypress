@@ -3,8 +3,8 @@ import {
   query,
   where,
   getDocs,
-  limit,
   getDoc,
+  limit,
   arrayRemove,
   doc,
   arrayUnion,
@@ -14,9 +14,34 @@ import { firestore } from "../lib/firebase";
 
 export async function doesUsernameExist(username) {
   const userRefs = collection(firestore, "users");
+
   const q = query(userRefs, where("username", "==", username));
+
   const querySnapshot = await getDocs(q);
+
   return !querySnapshot.empty;
+}
+
+export async function getUserByUsername(username) {
+  const userRefs = collection(firestore, "users");
+
+  const q = query(userRefs, where("username", "==", username));
+
+  const querySnapshot = await getDocs(q);
+
+  if (querySnapshot.empty) {
+    return false;
+  }
+
+  const results = [];
+
+  querySnapshot.forEach((doc) => {
+    results.push({
+      ...doc.data(),
+      docId: doc.id,
+    });
+  });
+  return results;
 }
 
 export async function getUserByUserId(userId) {
@@ -94,7 +119,7 @@ export async function getPhotos(userId, following) {
     });
   });
 
-  const photoWithUserDetails = await Promise.all(
+  const photosWithUserDetails = await Promise.all(
     userFollowedPhotos.map(async (photo) => {
       let userLikedPhoto = false;
       if (photo.likes.includes(userId)) {
@@ -105,13 +130,84 @@ export async function getPhotos(userId, following) {
       return { username, ...photo, userLikedPhoto };
     })
   );
-  return photoWithUserDetails;
+
+  return photosWithUserDetails;
 }
 
 export async function updateLikes(photoDocId, userId, isLiked) {
-  const photoDocRef = doc(firestore, 'photos', photoDocId);
+  const photoDocRef = doc(firestore, "photos", photoDocId);
 
   return updateDoc(photoDocRef, {
-    likes: isLiked ? arrayRemove(userId) : arrayUnion(userId)
+    likes: isLiked ? arrayRemove(userId) : arrayUnion(userId),
   });
-} 
+}
+
+export async function getUserIdByUsername(username) {
+  const userRefs = collection(firestore, "users");
+
+  const q = query(userRefs, where("username", "==", username));
+
+  const querySnapshot = await getDocs(q);
+
+  const results = [];
+
+  querySnapshot.forEach((doc) => {
+    results.push({
+      ...doc.data(),
+    });
+  });
+
+  const [{ userId }] = results;
+
+  return userId;
+}
+
+export async function getUserPhotosByUserId(userId) {
+  const photosRef = collection(firestore, "photos");
+
+  const q = query(photosRef, where("userId", "==", userId));
+
+  const querySnapshot = await getDocs(q);
+
+  const results = [];
+
+  querySnapshot.forEach((doc) => {
+    results.push({
+      ...doc.data(),
+      docId: doc.id,
+    });
+  });
+  return results;
+}
+
+export async function isUserFollowingProfile(loggedInUserId, profileDocId) {
+  const profileDocRef = doc(firestore, "users", profileDocId);
+  const docSnapshot = await getDoc(profileDocRef);
+
+  const { followers } = docSnapshot.data();
+
+  return followers.includes(loggedInUserId);
+}
+
+export async function toggleFollow(
+  activeDocId,
+  profileDocId,
+  activeUserId,
+  profileUserId,
+  isActiveUserFollowingProfile
+) {
+  const activeUserDocRef = doc(firestore, "users", activeDocId);
+  const profileDocRef = doc(firestore, "users", profileDocId);
+
+  await updateDoc(activeUserDocRef, {
+    following: !isActiveUserFollowingProfile
+      ? arrayUnion(profileUserId)
+      : arrayRemove(profileUserId),
+  });
+
+  await updateDoc(profileDocRef, {
+    followers: !isActiveUserFollowingProfile
+      ? arrayUnion(activeUserId)
+      : arrayRemove(activeUserId),
+  });
+}
