@@ -50,14 +50,7 @@ function App() {
                 </IsUserLoggedIn>
               }
             />
-            <Route
-              path={ROUTES.PROFILE}
-              exact
-              element={
-                  <Profile />
-           
-              }
-            />
+            <Route path={ROUTES.PROFILE} exact element={<Profile />} />
             <Route path="/*" Component={NotFound} />
           </Routes>
         </Suspense>
